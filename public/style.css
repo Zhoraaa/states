@@ -1,0 +1,45 @@
+.hide {
+    display: none;
+}
+
+/* Elems */
+.hov-gray {
+    transition: all 0.2s ease-in;
+}
+.hov-gray:hover {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+/* Forms */
+.form-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+}
+.form-block-wrapper{
+    min-width: 80%;
+    width: 800px;
+
+    margin: auto;
+}
+.theme-inp {
+    width: 100%;
+
+    border: none;
+
+    padding: 10px;
+    padding-left: 20px;
+
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+/* TinyMCE */
+.tox-statusbar__branding {
+    width: 0;
+
+    margin: 0;
+    
+    overflow: hidden;
+    display: none;
+}
