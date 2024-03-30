@@ -10,23 +10,23 @@ class LikeController extends Controller
 {
     //
 
-    public function like(Request $request)
+    public function react($post_id, $clarification)
     {
         $hasLike = Like::where('author_id', Auth::user()->id)
-            ->where('state_id', $request->id)
-            ->where('dislike', $request->dislike)
-            ->get();
+            ->where('state_id', $post_id)
+            ->where('dislike', $clarification)
+            ->first(); // Получаем только одну запись
 
         if ($hasLike) {
             $hasLike->delete();
         } else {
             Like::create([
-                'author_id', Auth::user()->id,
-                'state_id', $request->author_id,
-                'dislike', $request->dislike
+                'author_id' => Auth::user()->id, // Исправлено: заменена запятая на =>
+                'state_id' => $post_id, // Исправлено: заменена запятая на =>
+                'dislike' => $clarification // Исправлено: заменена запятая на =>
             ]);
         }
 
-        return redirect()->back();
+        return response()->json(['message' => 'Запрос успешно обработан', 'data' => 'Пинг']);
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BasketController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
@@ -27,6 +28,8 @@ Route::post('/news/{id}/delete', [PostController::class, "postDelete"])->name('p
 Route::post('/news/save', [PostController::class, "postSave"])->middleware('auth')->name('savePost');
 Route::get('/news/reply-to/{idToReply}', [PostController::class, "postEditor"])->middleware('auth')->name('postReply');
 Route::post('/news/reply-to/{idToReply}', [PostController::class, "postSave"])->middleware('auth')->name('postReply');
+
+Route::post('/react/{post_id}/{clarification}', [LikeController::class, "react"])->middleware('auth')->name('react');
 
 Route::get('/user', function () { return view('user.perArea'); })->middleware('auth')->name("user");
 Route::get('/user/auth', function () { return view('user.authPage'); })->middleware('guest')->name("auth");

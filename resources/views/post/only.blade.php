@@ -10,6 +10,7 @@
 @endsection
 
 @section('body')
+    @csrf
     @auth
         <div class="d-flex">
             @if (!auth()->user()->banned)
@@ -30,14 +31,17 @@
         </div>
     @endauth
 
-    <div class="border border-secondary rounded m-2 p-3">
-        @if (isset($post->reply_to))
-            <a href="{{ @route('seePost', ['id' => $post->reply_to]) }}">К родительской ветке</a>
-            <hr>
-        @endif
+    <div class="border border-secondary rounded m-2 p-3 post" id="{{ $post['id'] }}">
         <h1>
             {{ $post->theme }}
-            <span class="text-secondary font-weight-light font-italic">({{ $post['author'] }})</span>
+            <span class="text-secondary font-weight-light font-italic">{{ $post['author'] }}</span>
+
+            <button class="btn btn-success react-btn" id="like">
+                Лайк (0)
+            </button>
+            <button class="btn btn-danger react-btn" id="dislike">
+                Дизлайк (0)
+            </button>
         </h1>
         <span>{!! $post->text !!}</span>
     </div>
@@ -57,4 +61,27 @@
             @endforeach
         </div>
     @endif
+
+    <script>
+        $('.react-btn').click(
+            function() {
+                let react = $(this).attr('id');
+                let id = $('.post').attr('id')
+
+                console.log(react + ' ' + id);
+
+                $.ajax({
+                    url: '/react/' + id + '/' + react,
+                    method: 'POST',
+                    success: function(response) {
+                        console.log('Успех');
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Ошибка');
+                    }
+                })
+            }
+        )
+    </script>
+
 @endsection
