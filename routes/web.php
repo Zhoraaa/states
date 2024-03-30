@@ -43,3 +43,6 @@ Route::post('/admin/doMod/{id}', [AdminController::class, "doMod"])->middleware(
 Route::post('/admin/undoMod/{id}', [AdminController::class, "undoMod"])->middleware('auth')->name('undoMod');
 Route::post('/admin/ban/{id}', [AdminController::class, "ban"])->middleware('auth')->name('ban');
 Route::post('/admin/unban/{id}', [AdminController::class, "unban"])->middleware('auth')->name('unban');
+
+Route::get('/admin/newsList', [AdminController::class, "list"])->middleware('auth')->name('adminNewsList');
+Route::post('/admin/newsList/block/{id}', [AdminController::class, "blockNews"])->middleware('auth')->name('blockNews');
