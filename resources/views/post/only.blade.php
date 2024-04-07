@@ -1,6 +1,8 @@
 @php
-    $post = $theme['firstPost'];
-    $replies = $theme['replies'];
+    $post = $data['post'];
+    $likes = $data['likes'] ?? 0;
+    $dislikes = $data['dislikes'] ?? 0;
+    $comments = $data['comments'] ?? null;
 @endphp
 
 @extends('layout')
@@ -10,78 +12,46 @@
 @endsection
 
 @section('body')
-    @csrf
     @auth
         <div class="d-flex">
-            @if (!auth()->user()->banned)
-                <a href="{{ @route('postReply', ['idToReply' => $post->id]) }}">
-                    <button class="btn btn-primary m-2">Продолжить ветку</button>
-                </a>
-            @endif
             @if (auth()->user()->id === $post->author_id || auth()->user()->role < 3)
-                <form action="{{ @route('postEdit', ['id' => $post->id]) }}" method="post">
-                    @csrf
-                    <button class="btn btn-secondary m-2">Редактировать пост</button>
-                </form>
-                <form action="{{ @route('postDelete', ['id' => $post->id]) }}" method="post">
-                    @csrf
-                    <button class="btn btn-danger m-2">Удалить пост</button>
-                </form>
+                <a href="{{ @route('postEdit', ['id' => $post->id]) }}" class="btn btn-secondary m-2">Редактировать пост</a>
+                <a href="{{ @route('postDelete', ['id' => $post->id]) }}" class="btn btn-danger m-2">Удалить пост</a>
             @endif
         </div>
     @endauth
 
-    <div class="border border-secondary rounded m-2 p-3 post" id="{{ $post['id'] }}">
+    <div class="border border-secondary rounded m-2 p-3">
         <h1>
             {{ $post->theme }}
-            <span class="text-secondary font-weight-light font-italic">{{ $post['author'] }}</span>
-
-            <button class="btn btn-success react-btn" id="like">
-                Лайк (0)
-            </button>
-            <button class="btn btn-danger react-btn" id="dislike">
-                Дизлайк (0)
-            </button>
+            <span class="text-secondary font-weight-light font-italic">({{ $post['author'] }})</span>
+            <a href="{{ route('like', ['id' => $post->id]) }}" class="btn btn-success ml-2">Лайк ({{ $likes }})</a>
+            <a href="{{ route('dislike', ['id' => $post->id]) }}" class="btn btn-danger ml-2">Дизлайк
+                ({{ $dislikes }})</a>
         </h1>
         <span>{!! $post->text !!}</span>
     </div>
 
-    @if ($replies)
-        <div class="m-2 p-3">
-            <h4>Ветка:</h4>
-            @foreach ($replies as $reply)
-                <div class="border border-secondary rounded m-2 p-3">
-                    <h4 class="text-secondary">
-                        <a href="{{ @route('seePost', ['id' => $reply['id']]) }}">{{ $reply['theme'] }}</a>
-                        <span class="text-secondary font-weight-light font-italic">({{ $reply['author'] }})</span>
+    <div class="m-3 p-2">
+        <h2>Комментарии:</h2>
+        @if (auth()->user() && !auth()->user()->banned)
+            <form action="{{ route('commNew', ['id' => $post->id]) }}" method="POST">
+                @csrf
+                <textarea name="commText" cols="30" rows="10" id="tinyMCE"></textarea>
+                <button class="btn btn-primary mt-2">Сохранить</button>
+            </form>
+        @endif
+
+        @if (isset($comments))
+            @foreach ($comments as $comment)
+                <div>
+                    <h4>
+                        <b>{{ $comment->author }}</b>
+                        <i>{{ $comment->created_at }}</i>
                     </h4>
-                    <hr>
-                    <p>{!! $reply['text'] !!}</p>
+                    <p>{!! $comment->text !!}</p>
                 </div>
             @endforeach
-        </div>
-    @endif
-
-    <script>
-        $('.react-btn').click(
-            function() {
-                let react = $(this).attr('id');
-                let id = $('.post').attr('id')
-
-                console.log(react + ' ' + id);
-
-                $.ajax({
-                    url: '/react/' + id + '/' + react,
-                    method: 'POST',
-                    success: function(response) {
-                        console.log('Успех');
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('Ошибка');
-                    }
-                })
-            }
-        )
-    </script>
-
+        @endif
+    </div>
 @endsection

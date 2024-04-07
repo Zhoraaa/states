@@ -21,16 +21,22 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PostController::class, "allPosts"])->name('home');
 
-Route::post('/news', [PostController::class, "postEditor"])->middleware('auth')->name('postNew');
+// Новости
+Route::get('/news', [PostController::class, "postEditor"])->middleware('auth')->name('postNew');
 Route::get('/news/{id}', [PostController::class, "seePost"])->name('seePost');
-Route::post('/news/{id}/edit', [PostController::class, "postEditor"])->name('postEdit');
-Route::post('/news/{id}/delete', [PostController::class, "postDelete"])->name('postDelete');
+Route::get('/news/{id}/edit', [PostController::class, "postEditor"])->name('postEdit');
+Route::get('/news/{id}/delete', [PostController::class, "postDelete"])->name('postDelete');
 Route::post('/news/save', [PostController::class, "postSave"])->middleware('auth')->name('savePost');
-Route::get('/news/reply-to/{idToReply}', [PostController::class, "postEditor"])->middleware('auth')->name('postReply');
-Route::post('/news/reply-to/{idToReply}', [PostController::class, "postSave"])->middleware('auth')->name('postReply');
 
-Route::post('/react/{post_id}/{clarification}', [LikeController::class, "react"])->middleware('auth')->name('react');
+// Лайки
+Route::get('/news/{id}/like', [LikeController::class, "like"])->middleware('auth')->name('like');
+Route::get('/news/{id}/dislike', [LikeController::class, "dislike"])->middleware('auth')->name('dislike');
 
+// Комменты
+Route::post('/news/{id}/comment', [LikeController::class, "commNew"])->middleware('auth')->name('commNew');
+Route::get('/comm/{id}/delete', [LikeController::class, "commDel"])->middleware('auth')->name('commDel');
+
+// Пользователи
 Route::get('/user', function () { return view('user.perArea'); })->middleware('auth')->name("user");
 Route::get('/user/auth', function () { return view('user.authPage'); })->middleware('guest')->name("auth");
 Route::get('/user/reg', function () { return view('user.regPage'); })->middleware('guest')->name("reg");
@@ -38,11 +44,9 @@ Route::post('/user/exit', [UserController::class, "logOut"])->middleware('auth')
 Route::post('/user/new', [UserController::class, "signUp"])->name("signUp");
 Route::post('/user/auth', [UserController::class, "signIn"])->name("signIn");
 
+// Админка
 Route::get('/admin/usrRedaction', [AdminController::class, "usrRedaction"])->middleware('auth')->name('usrRedaction');
 Route::post('/admin/doMod/{id}', [AdminController::class, "doMod"])->middleware('auth')->name('doMod');
 Route::post('/admin/undoMod/{id}', [AdminController::class, "undoMod"])->middleware('auth')->name('undoMod');
 Route::post('/admin/ban/{id}', [AdminController::class, "ban"])->middleware('auth')->name('ban');
 Route::post('/admin/unban/{id}', [AdminController::class, "unban"])->middleware('auth')->name('unban');
-
-Route::get('/admin/newsList', [AdminController::class, "list"])->middleware('auth')->name('adminNewsList');
-Route::post('/admin/newsList/block/{id}', [AdminController::class, "blockNews"])->middleware('auth')->name('blockNews');

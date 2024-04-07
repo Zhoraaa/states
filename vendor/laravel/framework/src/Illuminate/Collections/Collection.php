@@ -998,11 +998,8 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     /**
      * Push all of the given items onto the collection.
      *
-     * @template TConcatKey of array-key
-     * @template TConcatValue
-     *
-     * @param  iterable<TConcatKey, TConcatValue>  $source
-     * @return static<TKey|TConcatKey, TValue|TConcatValue>
+     * @param  iterable<array-key, TValue>  $source
+     * @return static
      */
     public function concat($source)
     {
@@ -1493,16 +1490,6 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      */
     public function sortByDesc($callback, $options = SORT_REGULAR)
     {
-        if (is_array($callback) && ! is_callable($callback)) {
-            foreach ($callback as $index => $key) {
-                $comparison = Arr::wrap($key);
-
-                $comparison[1] = 'desc';
-
-                $callback[$index] = $comparison;
-            }
-        }
-
         return $this->sortBy($callback, $options, true);
     }
 

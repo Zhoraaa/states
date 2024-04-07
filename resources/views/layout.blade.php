@@ -5,8 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <title>@yield('title')</title>
     {{-- Bootstrap --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
@@ -17,12 +15,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous">
     </script>
-    {{-- TinyMCE --}}
+    {{-- TineMCE --}}
     <script src="https://cdn.tiny.cloud/1/uig2iyio5vvat8bnvd2319qa49zs1kp1ktl25x3q5u1l5og8/tinymce/6/tinymce.min.js"
         referrerpolicy="origin"></script>
-    {{-- jQuery --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-        crossorigin="anonymous"></script>
     <script>
         tinymce.init({
             selector: '#tinyMCE',
@@ -38,28 +33,46 @@
 
 <body>
 
-    <x-header></x-header>
-
-    <x-messages></x-messages>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">
+            <img src="{{ asset('public.img.logo.png') }}" alt="Логотип">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ @route('home') }}">Новости</a>
+                </li>
+                @guest
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ @route('auth') }}">Вход</a>
+                    </li>
+                @endguest
+                @auth
+                @if (auth()->user()->role === 1)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ @route('usrRedaction') }}">Администрирование</a>
+                </li>
+                @endif
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ @route('user') }}">Личный кабинет</a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="{{ @route('logout') }}" method="POST">
+                            @csrf
+                            <button class="nav-link bg-dark border-0 " href="#">Выход</button>
+                        </form>
+                    </li>
+                @endauth
+            </ul>
+        </div>
+    </nav>
 
     @yield('body')
 
 </body>
-
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        $('.close-server-message').on('click', function() {
-            $(this).closest('div.server-message').animate({
-                    opacity: 0,
-                    height: 40,
-                },
-                250,
-                'linear',
-                function() {
-                    $(this).closest('div.server-message').remove();
-                })
-        });
-    });
-</script>
 
 </html>

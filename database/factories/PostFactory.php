@@ -16,6 +16,7 @@ class PostFactory extends Factory
         return [
             'theme' => $this->faker->sentence,
             'text' => $this->faker->paragraph,
+            'blocked' => 0,
             'category_id' => $this->faker->randomElement([1, 2]),
             'author_id' => $this->faker->randomElement($users)->id,
         ];

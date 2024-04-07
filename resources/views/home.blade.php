@@ -8,10 +8,7 @@
     <div class="border border-secondary rounded m-2 p-3">
         @auth
             @if (auth()->user()->role < 3)
-                <form action="{{ @route('postNew') }}" method="post">
-                    @csrf
-                    <button class="btn btn-primary m-2">Написать новость</button>
-                </form>
+                <a href="{{ route('postNew') }}" class="btn btn-primary m-2">Написать новость</a>
             @endif
         @endauth
         @if (isset($posts))
