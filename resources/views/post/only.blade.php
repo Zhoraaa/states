@@ -16,7 +16,8 @@
         <div class="d-flex">
             @if (auth()->user()->id === $post->author_id || auth()->user()->role < 3)
                 <a href="{{ @route('postEdit', ['id' => $post->id]) }}" class="btn btn-secondary m-2">Редактировать пост</a>
-                <a href="{{ @route('postDelete', ['id' => $post->id]) }}" class="btn btn-danger m-2">Удалить пост</a>
+                <a href="{{ @route('postDelete', ['id' => $post->id]) }}" class="btn btn-danger m-2">Удалить
+                    пост</a>
             @endif
         </div>
     @endauth
@@ -25,8 +26,10 @@
         <h1>
             {{ $post->theme }}
             <span class="text-secondary font-weight-light font-italic">({{ $post['author'] }})</span>
-            <a href="{{ route('like', ['id' => $post->id]) }}" class="btn btn-success ml-2">Лайк ({{ $likes }})</a>
-            <a href="{{ route('dislike', ['id' => $post->id]) }}" class="btn btn-danger ml-2">Дизлайк
+            <br>
+            <a href="{{ route('react', ['id' => $post->id, 'react' => 'like']) }}" class="btn btn-success mr-1">Лайк
+                ({{ $likes }})</a>
+            <a href="{{ route('react', ['id' => $post->id, 'react' => 'dislike']) }}" class="btn btn-danger">Дизлайк
                 ({{ $dislikes }})</a>
         </h1>
         <span>{!! $post->text !!}</span>
@@ -44,11 +47,16 @@
 
         @if (isset($comments))
             @foreach ($comments as $comment)
-                <div>
-                    <h4>
+                <div class="mt-2 p-3 border border-secondary rounded">
+                    <p>
                         <b>{{ $comment->author }}</b>
                         <i>{{ $comment->created_at }}</i>
-                    </h4>
+                        @if (auth()->user()->role < 3 || auth()->user()->id === $comment->author_id)
+                            <br>
+                            <a href="{{ route('commDel', ['id' => $comment->id]) }}" class="btn btn-danger">Удалить
+                                комментарий</a>
+                        @endif
+                        </h4>
                     <p>{!! $comment->text !!}</p>
                 </div>
             @endforeach

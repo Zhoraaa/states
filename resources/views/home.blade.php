@@ -4,6 +4,10 @@
     Главная
 @endsection
 
+@php
+    $posts = $data['posts']
+@endphp
+
 @section('body')
     <div class="border border-secondary rounded m-2 p-3">
         @auth

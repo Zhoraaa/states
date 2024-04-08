@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Like;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -54,6 +56,20 @@ class PostController extends Controller
             ->select('posts.*', 'users.login as author')
             ->where("posts.id", $id)
             ->first();
+
+        $data['comments'] = Comment::where('post_id', $id)
+            ->join('users', 'users.id', 'comments.author_id')
+            ->select('comments.*', 'users.login as author')
+            ->paginate(15);
+
+        $data['likes'] = Like::where('post_id', $id)
+            ->where('dislike', '0')
+            ->count();
+        // dd($data['like']);
+
+        $data['dislikes'] = Like::where('post_id', $id)
+            ->where('dislike', '1')
+            ->count();
 
         return view("post.only", compact("data"));
     }

@@ -1,10 +1,9 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\BasketController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,12 +28,11 @@ Route::get('/news/{id}/delete', [PostController::class, "postDelete"])->name('po
 Route::post('/news/save', [PostController::class, "postSave"])->middleware('auth')->name('savePost');
 
 // Лайки
-Route::get('/news/{id}/like', [LikeController::class, "like"])->middleware('auth')->name('like');
-Route::get('/news/{id}/dislike', [LikeController::class, "dislike"])->middleware('auth')->name('dislike');
+Route::get('/news/{id}/{react}', [LikeController::class, "react"])->middleware('auth')->name('react');
 
 // Комменты
-Route::post('/news/{id}/comment', [LikeController::class, "commNew"])->middleware('auth')->name('commNew');
-Route::get('/comm/{id}/delete', [LikeController::class, "commDel"])->middleware('auth')->name('commDel');
+Route::post('/news/{id}/comment', [CommentController::class, "commNew"])->middleware('auth')->name('commNew');
+Route::get('/comm/{id}/delete', [CommentController::class, "commDel"])->middleware('auth')->name('commDel');
 
 // Пользователи
 Route::get('/user', function () { return view('user.perArea'); })->middleware('auth')->name("user");

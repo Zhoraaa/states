@@ -10,6 +10,6 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = [
-        "theme", "text", "category_id", "author_id", 'blocked'
+        "theme", "text", "category_id", "author_id", "blocked"
     ];
 }
