@@ -5,7 +5,7 @@
 @endsection
 
 @php
-    $posts = $data['posts']
+    $posts = $data['posts'];
 @endphp
 
 @section('body')
@@ -24,11 +24,20 @@
                 <div class="border border-secondary rounded p-4">
                     <a href="{{ route('seePost', ['id' => $post->id]) }}">
                         <h2>
-                            Тема: {{ $post->theme }}
+                            {{ $post->theme }}
                         </h2>
                     </a>
-                    <span class="text-secondary font-weight-light font-italic">Автор: ({{ $post['author'] }})</span>
+                    <span class="text-secondary font-weight-light font-italic">Автор: {{ $post['author'] }}</span>
                     <p>{!! substr($post->text, 0, 200) !!}</p>
+                    @if (auth()->user()->role < 3)
+                        @php
+                            $btnClass = $post->blocked ? 'warning' : 'danger';
+                            $btnText = $post->blocked ? 'Деблокировать' : 'Заблокировать';
+                        @endphp
+                        <a href="{{ route('block', ['id' => $post->id]) }}" class="btn btn-{{ $btnClass }}">
+                            {{ $btnText }}
+                        </a>
+                    @endif
                 </div>
             @endforeach
             <div class="m-2">

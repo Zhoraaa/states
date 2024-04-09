@@ -87,4 +87,13 @@ class PostController extends Controller
 
         return redirect()->route("home");
     }
+    public function block($id) {
+        $post = Post::find($id);
+
+        $post->update([
+            'blocked' => !$post->blocked
+        ]);
+
+        return redirect()->back()->with('success','Статус изменён');
+    }
 }

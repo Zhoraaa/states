@@ -28,11 +28,14 @@ Route::get('/news/{id}/delete', [PostController::class, "postDelete"])->name('po
 Route::post('/news/save', [PostController::class, "postSave"])->middleware('auth')->name('savePost');
 
 // Лайки
-Route::get('/news/{id}/{react}', [LikeController::class, "react"])->middleware('auth')->name('react');
+Route::get('/news/{id}/react/{react}', [LikeController::class, "react"])->middleware('auth')->name('react');
 
 // Комменты
 Route::post('/news/{id}/comment', [CommentController::class, "commNew"])->middleware('auth')->name('commNew');
 Route::get('/comm/{id}/delete', [CommentController::class, "commDel"])->middleware('auth')->name('commDel');
+
+// Блокировка постов
+Route::get('/news/{id}/block', [PostController::class, "block"])->middleware('auth')->name('block');
 
 // Пользователи
 Route::get('/user', function () { return view('user.perArea'); })->middleware('auth')->name("user");
