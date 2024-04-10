@@ -41,12 +41,23 @@ class PostController extends Controller
         // dd($postRaw->id);
         return redirect()->route('seePost', ['id' => $post_id]);
     }
-    public function allPosts()
+    public function allPosts(Request $request)
     {
-        $data['posts'] = Post::join('users', 'posts.author_id', '=', 'users.id')
-            ->select('posts.*', 'users.login as author')
-            ->where('category_id', 1)
-            ->paginate(5);
+        $queue = $request->desc ? 'asc' : 'desc';
+        $data['desc'] = !$request->desc ? true : false;
+
+        if (Auth::user() && Auth::user()->role < 3) {
+            $data['posts'] = Post::join('users', 'posts.author_id', '=', 'users.id')
+                ->select('posts.*', 'users.login as author')
+                ->orderBy('id', $queue)
+                ->paginate(15);
+        } else {
+            $data['posts'] = Post::join('users', 'posts.author_id', '=', 'users.id')
+                ->select('posts.*', 'users.login as author')
+                ->where('blocked', 0)
+                ->orderBy('id', $queue)
+                ->paginate(15);
+        }
 
         return view("home", compact("data"));
     }
@@ -87,13 +98,14 @@ class PostController extends Controller
 
         return redirect()->route("home");
     }
-    public function block($id) {
+    public function block($id)
+    {
         $post = Post::find($id);
 
         $post->update([
             'blocked' => !$post->blocked
         ]);
 
-        return redirect()->back()->with('success','Статус изменён');
+        return redirect()->back()->with('success', 'Статус изменён');
     }
 }

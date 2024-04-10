@@ -6,6 +6,7 @@
 
 @php
     $posts = $data['posts'];
+    $desc = $data['desc'];
 @endphp
 
 @section('body')
@@ -15,6 +16,15 @@
                 <a href="{{ route('postNew') }}" class="btn btn-primary m-2">Написать новость</a>
             @endif
         @endauth
+        @if ($desc)
+            <a href="?desc=true" class="btn btn-secondary">
+                Сначала старые
+            </a>
+        @else
+            <a href="?" class="btn btn-secondary">
+                Сначала новые
+            </a>
+        @endif
         @if (isset($posts))
             <div class="m-2">
                 {{ $posts->links() }}
@@ -29,15 +39,17 @@
                     </a>
                     <span class="text-secondary font-weight-light font-italic">Автор: {{ $post['author'] }}</span>
                     <p>{!! substr($post->text, 0, 200) !!}</p>
-                    @if (auth()->user()->role < 3)
-                        @php
-                            $btnClass = $post->blocked ? 'warning' : 'danger';
-                            $btnText = $post->blocked ? 'Деблокировать' : 'Заблокировать';
-                        @endphp
-                        <a href="{{ route('block', ['id' => $post->id]) }}" class="btn btn-{{ $btnClass }}">
-                            {{ $btnText }}
-                        </a>
-                    @endif
+                    @auth
+                        @if (auth()->user()->role < 3)
+                            @php
+                                $btnClass = $post->blocked ? 'warning' : 'danger';
+                                $btnText = $post->blocked ? 'Деблокировать' : 'Заблокировать';
+                            @endphp
+                            <a href="{{ route('block', ['id' => $post->id]) }}" class="btn btn-{{ $btnClass }}">
+                                {{ $btnText }}
+                            </a>
+                        @endif
+                    @endauth
                 </div>
             @endforeach
             <div class="m-2">
